@@ -81,6 +81,8 @@ BuildRequires: ssu-kickstart-configuration
 BuildRequires: pkgconfig(android-headers)
 BuildRequires: repomd-pattern-builder
 BuildRequires: qt5-qttools-kmap2qmap
+BuildRequires: sed
+Requires: sed
 Requires: droid-hal
 %if 0%{?community_adaptation:1}
 # because it provides one ssu feature, do:
@@ -513,8 +515,8 @@ fi
   %endif
 %endif
 
-# build rnd kickstarts on devel level, release kickstarts on all other levels
-%if 0%{?qa_stage_devel:1}
+# build rnd kickstarts on devel and branch_devel level, release kickstarts on all other levels
+%if 0%{?qa_stage_devel:1} || 0%{?qa_stage_branch_devel:1}
   KS_LEVELS=true
 %else
   KS_LEVELS=false
@@ -571,8 +573,8 @@ fi
 ################################################################
 %post
 # Force an update of ssu repositories
-touch %{board_mapping_dir}/* || :
-touch %{_datadir}/ssu/features.d/* || :
+touch %{board_mapping_dir}/* &> /dev/null || :
+touch %{_datadir}/ssu/features.d/* &> /dev/null || :
 
 # To add additional post scripts, one can define those as part
 # of additional_post_scripts macro.
